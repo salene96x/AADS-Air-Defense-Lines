@@ -39,7 +39,7 @@
             this.gMapControl1.GrayScaleMode = false;
             this.gMapControl1.HelperLineOption = GMap.NET.WindowsForms.HelperLineOptions.DontShow;
             this.gMapControl1.LevelsKeepInMemory = 5;
-            this.gMapControl1.Location = new System.Drawing.Point(13, 13);
+            this.gMapControl1.Location = new System.Drawing.Point(1, -1);
             this.gMapControl1.MarkersEnabled = true;
             this.gMapControl1.MaxZoom = 2;
             this.gMapControl1.MinZoom = 2;
@@ -53,9 +53,13 @@
             this.gMapControl1.ScaleMode = GMap.NET.WindowsForms.ScaleModes.Integer;
             this.gMapControl1.SelectedAreaFillColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(65)))), ((int)(((byte)(105)))), ((int)(((byte)(225)))));
             this.gMapControl1.ShowTileGridLines = false;
-            this.gMapControl1.Size = new System.Drawing.Size(775, 425);
+            this.gMapControl1.Size = new System.Drawing.Size(800, 452);
             this.gMapControl1.TabIndex = 0;
             this.gMapControl1.Zoom = 0D;
+            this.gMapControl1.OnMapClick += new GMap.NET.WindowsForms.MapClick(this.gMapControl1_OnMapClick);
+            this.gMapControl1.OnPolygonClick += new GMap.NET.WindowsForms.PolygonClick(this.gMapControl1_OnPolygonClick);
+            this.gMapControl1.OnPolygonDoubleClick += new GMap.NET.WindowsForms.PolygonDoubleClick(this.gMapControl1_OnPolygonDoubleClick);
+            this.gMapControl1.OnPolygonEnter += new GMap.NET.WindowsForms.PolygonEnter(this.gMapControl1_OnPolygonEnter);
             // 
             // Form1
             // 

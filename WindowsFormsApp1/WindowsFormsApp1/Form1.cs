@@ -22,22 +22,10 @@ using Newtonsoft.Json.Linq;
 
 namespace WindowsFormsApp1
 {
-    public class Airport {
-        public string iata { get; set; }
-        public string icao { get; set; }
-        public double airportLat { get; set; }
-        public double aiportLon { get; set; }
-    }
-    public class ThailandPolygon
-    {
-        public List<List<List<List<double>>>> coordinates; 
-    }
     public partial class Form1 : Form
     {
-        private GMapPolygon outestRadius;
         private GMapOverlay markersOverlay = new GMapOverlay(id: "markersOverlay");
         private List<PointLatLng> outestRadiusPoints;
-        private string outestRadiusName = "OutestRadius";
         private GMapOverlay polygonOverlay = new GMapOverlay(id: "polygonsOverlay");
         private List<string> airportICAO;
         private List<PointLatLng> airportICAOPoints;
@@ -45,11 +33,13 @@ namespace WindowsFormsApp1
         {
             InitializeComponent();
             this.LoadMap();
+            this.WindowState = FormWindowState.Maximized;
             //this.createAirportMarkers();
             //this.getAirportData();
         }
         void LoadMap()
         {
+            //gMapControl1.OnPolygonClick += Map_OnPolygonClick;
             gMapControl1.MapProvider = GMapProviders.GoogleMap;
             gMapControl1.Position = new PointLatLng(13.736717, 100.523186);
             gMapControl1.MinZoom = 5;
@@ -58,10 +48,12 @@ namespace WindowsFormsApp1
             this.readJson();
             gMapControl1.Overlays.Add(polygonOverlay);
             gMapControl1.Overlays.Add(markersOverlay);
+            gMapControl1.Height = Screen.PrimaryScreen.Bounds.Height;
+            gMapControl1.Width = Screen.PrimaryScreen.Bounds.Width;
             //this.generateOutestRadius();
             //this.createAirportMarkers();
         }
-        void getAirportData() 
+        void getAirportData()
         {
             var configuration = new CsvConfiguration(CultureInfo.InvariantCulture)
             {
@@ -94,23 +86,92 @@ namespace WindowsFormsApp1
         void readJson()
         {
             outestRadiusPoints = new List<PointLatLng>();
-            var jsonString = File.ReadAllText(@"C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\thailand_polygon.json");
+            var jsonString = File.ReadAllText(@"C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\FIR_thai.json");
             var jsonObject = JObject.Parse(jsonString);
-            var jArray = (JArray)jsonObject["features"][0]["geometry"]["coordinates"];
-            Console.WriteLine(jArray[0][0]);
-            List<PointLatLng> points = new List<PointLatLng>();
-            foreach (var j in jArray)
-            {
-                foreach (var x in j)
+            var jArray = (JArray)jsonObject["geometry"]["rings"];
+            var jsonStringTHPolygon = File.ReadAllText(@"C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\thailand_polygon.json");
+            var jsonObjectTHPolygon = JObject.Parse(jsonStringTHPolygon);
+            var jArrayTHPolygon = (JArray)jsonObjectTHPolygon["features"][0]["geometry"]["coordinates"];
+            //int i = 0;
+            //foreach (var j in jArrayTHPolygon)
+            //{
+            //    foreach (var x in j)
+            //    {
+            //        string name = "Thailand Main Land";
+            //        if (i == 727)
+            //        {
+            //            List<PointLatLng> pointsEachPolygon = new List<PointLatLng>();
+            //            int index = 0;
+            //            foreach (var z in x)
+            //            {
+            //                //if ((double)z[1] >= 6.27 && (double)z[0] >= 99.36)
+            //                //{
+            //                //    Console.WriteLine("Found at " + index);
+            //                //}\
+            //                //satun index = 120111
+            //                //ranong index = 140000
+            //                pointsEachPolygon.Add(new PointLatLng((double)z[1], (double)z[0]));
+            //                Console.WriteLine(index);
+            //                index++;
+            //            }
+            //            GMapPolygon subPolygonTH = new GMapPolygon(pointsEachPolygon, name);
+            //            subPolygonTH.IsHitTestVisible = true;
+            //            subPolygonTH.Fill = new SolidBrush(Color.FromArgb(0, Color.Red));
+            //            subPolygonTH.Stroke = new Pen(Color.Black, 2);
+            //            polygonOverlay.Polygons.Add(subPolygonTH);
+            //        }
+            //        i++;
+            //    }
+                List<PointLatLng> pointsRings = new List<PointLatLng>();
+                foreach (var x in jArray)
                 {
                     foreach (var z in x)
                     {
-                        outestRadiusPoints.Add(new PointLatLng((double)z[1], (double)z[0]));
+                        pointsRings.Add(new PointLatLng((double)z[1], (double)z[0]));
                     }
                 }
+                GMapPolygon polygon = new GMapPolygon(pointsRings, "rings");
+                polygon.Fill = new SolidBrush(Color.FromArgb(0, Color.DarkGray));
+                polygon.Stroke = new Pen(Color.DarkBlue, 3);
+                polygonOverlay.Polygons.Add(polygon);
+                polygon.IsHitTestVisible = true;
             }
-            GMapPolygon polygon = new GMapPolygon(outestRadiusPoints, "test");
-            polygonOverlay.Polygons.Add(polygon);
+        private void gMapControl1_OnPolygonDoubleClick(GMapPolygon item, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                Console.WriteLine(item.Name);
+            }
         }
+
+        private void gMapControl1_OnPolygonEnter(GMapPolygon item)
+        {
+            Console.WriteLine(item.Name.ToString());
+        }
+
+        private void gMapControl1_OnPolygonClick(GMapPolygon item, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Left)
+            {
+                Console.WriteLine(item.Name);
+            }
+        }
+
+        private void gMapControl1_OnMapClick(PointLatLng pointClick, MouseEventArgs e)
+        {
+            var mousePosition = gMapControl1.FromLocalToLatLng(e.X, e.Y);
+            Console.WriteLine(mousePosition);
+        }
+    }
+    public class Airport
+    {
+        public string iata { get; set; }
+        public string icao { get; set; }
+        public double airportLat { get; set; }
+        public double aiportLon { get; set; }
+    }
+    public class ThailandPolygon
+    {
+        public List<List<List<List<double>>>> coordinates;
     }
 }

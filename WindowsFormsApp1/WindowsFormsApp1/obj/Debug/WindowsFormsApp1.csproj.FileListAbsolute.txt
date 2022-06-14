@@ -71,4 +71,4 @@ C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\WindowsFormsApp1\Windo
 C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Numerics.Vectors.xml
 C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\WindowsFormsApp1\WindowsFormsApp1\bin\Debug\System.Threading.Tasks.Extensions.xml
-C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Airport.resources
+C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\WindowsFormsApp1\WindowsFormsApp1\obj\Debug\WindowsFormsApp1.Form1.resources
