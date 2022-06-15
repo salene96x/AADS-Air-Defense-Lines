@@ -26,7 +26,8 @@ namespace WindowsFormsApp1
     {
         private GMapOverlay markersOverlay = new GMapOverlay(id: "markersOverlay");
         private List<PointLatLng> outestRadiusPoints;
-        private GMapOverlay polygonOverlay = new GMapOverlay(id: "polygonsOverlay");
+        private GMapOverlay THOverlay = new GMapOverlay(id: "THOverlay");
+        private GMapOverlay THRingsOverlay = new GMapOverlay(id: "THRingsOverlay");
         private List<string> airportICAO;
         private List<PointLatLng> airportICAOPoints;
         public Form1()
@@ -46,10 +47,12 @@ namespace WindowsFormsApp1
             gMapControl1.MaxZoom = 100;
             gMapControl1.Zoom = 10;
             this.readJson();
-            gMapControl1.Overlays.Add(polygonOverlay);
+            gMapControl1.Overlays.Add(THOverlay);
+            gMapControl1.Overlays.Add(THRingsOverlay);
             gMapControl1.Overlays.Add(markersOverlay);
             gMapControl1.Height = Screen.PrimaryScreen.Bounds.Height;
             gMapControl1.Width = Screen.PrimaryScreen.Bounds.Width;
+            gMapControl1.Manager.BoostCacheEngine = true;
             //this.generateOutestRadius();
             //this.createAirportMarkers();
         }
@@ -86,42 +89,42 @@ namespace WindowsFormsApp1
         void readJson()
         {
             outestRadiusPoints = new List<PointLatLng>();
-            var jsonString = File.ReadAllText(@"C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\FIR_thai.json");
+            var jsonString = File.ReadAllText("FIR_thai.json");
             var jsonObject = JObject.Parse(jsonString);
             var jArray = (JArray)jsonObject["geometry"]["rings"];
-            var jsonStringTHPolygon = File.ReadAllText(@"C:\Users\Glaciiaz\Documents\GitHub\AADS-Air-Defense-Lines\thailand_polygon.json");
+            var jsonStringTHPolygon = File.ReadAllText("thailand_polygon.json");
             var jsonObjectTHPolygon = JObject.Parse(jsonStringTHPolygon);
             var jArrayTHPolygon = (JArray)jsonObjectTHPolygon["features"][0]["geometry"]["coordinates"];
-            //int i = 0;
-            //foreach (var j in jArrayTHPolygon)
-            //{
-            //    foreach (var x in j)
-            //    {
-            //        string name = "Thailand Main Land";
-            //        if (i == 727)
-            //        {
-            //            List<PointLatLng> pointsEachPolygon = new List<PointLatLng>();
-            //            int index = 0;
-            //            foreach (var z in x)
-            //            {
-            //                //if ((double)z[1] >= 6.27 && (double)z[0] >= 99.36)
-            //                //{
-            //                //    Console.WriteLine("Found at " + index);
-            //                //}\
-            //                //satun index = 120111
-            //                //ranong index = 140000
-            //                pointsEachPolygon.Add(new PointLatLng((double)z[1], (double)z[0]));
-            //                Console.WriteLine(index);
-            //                index++;
-            //            }
-            //            GMapPolygon subPolygonTH = new GMapPolygon(pointsEachPolygon, name);
-            //            subPolygonTH.IsHitTestVisible = true;
-            //            subPolygonTH.Fill = new SolidBrush(Color.FromArgb(0, Color.Red));
-            //            subPolygonTH.Stroke = new Pen(Color.Black, 2);
-            //            polygonOverlay.Polygons.Add(subPolygonTH);
-            //        }
-            //        i++;
-            //    }
+            int i = 0;
+            foreach (var j in jArrayTHPolygon)
+            {
+                foreach (var x in j)
+                {
+                    string name = "Thailand Main Land";
+                    if (i == 727)
+                    {
+                        List<PointLatLng> pointsEachPolygon = new List<PointLatLng>();
+                        int index = 0;
+                        foreach (var z in x)
+                        {
+                            //if ((double)z[1] >= 6.27 && (double)z[0] >= 99.36)
+                            //{
+                            //    Console.WriteLine("Found at " + index);
+                            //}\
+                            //satun index = 120111
+                            //ranong index = 140000
+                            pointsEachPolygon.Add(new PointLatLng((double)z[1], (double)z[0]));
+                            Console.WriteLine(index);
+                            index++;
+                        }
+                        GMapPolygon subPolygonTH = new GMapPolygon(pointsEachPolygon, name);
+                        subPolygonTH.IsHitTestVisible = true;
+                        subPolygonTH.Fill = new SolidBrush(Color.FromArgb(0, Color.Red));
+                        subPolygonTH.Stroke = new Pen(Color.Black, 2);
+                        THOverlay.Polygons.Add(subPolygonTH);
+                    }
+                    i++;
+                }
                 List<PointLatLng> pointsRings = new List<PointLatLng>();
                 foreach (var x in jArray)
                 {
@@ -133,9 +136,10 @@ namespace WindowsFormsApp1
                 GMapPolygon polygon = new GMapPolygon(pointsRings, "rings");
                 polygon.Fill = new SolidBrush(Color.FromArgb(0, Color.DarkGray));
                 polygon.Stroke = new Pen(Color.DarkBlue, 3);
-                polygonOverlay.Polygons.Add(polygon);
+                THRingsOverlay.Polygons.Add(polygon);
                 polygon.IsHitTestVisible = true;
             }
+        }
         private void gMapControl1_OnPolygonDoubleClick(GMapPolygon item, MouseEventArgs e)
         {
             if (e.Button == MouseButtons.Left)
